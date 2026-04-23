@@ -1,99 +1,67 @@
-# Findor Pro 🔍
+# Findor Pro 🔍 - Ultimate Web & Desktop GUI for `find`
 
-**Findor Pro** est une interface graphique (GUI) moderne et performante pour la commande Bash `find` sous Linux. Développée en Python avec PyQt6, elle permet de construire des requêtes de recherche complexes de manière intuitive tout en affichant la commande générée en temps réel, ce qui en fait un excellent outil pédagogique.
+**Findor Pro** est une interface graphique ultra-complète et pédagogique pour la commande Bash `find` sous Linux. Désormais disponible en version **Web (React/FastAPI)** et **Desktop (PyQt6)**.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
-![PyQt6](https://img.shields.io/badge/PyQt6-6.0+-41CD52?logo=qt&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
 
-## ✨ Fonctionnalités
+## 🚀 Nouveautés de la Version 2.0.0 (Pro)
 
-### 🛠 Filtres de Recherche Avancés
-- **Localisation** : Choix du dossier source via un sélecteur graphique.
-- **Pattern** : Recherche par nom ou pattern (ex: `*.py`) avec option de sensibilité à la casse.
-- **Types** : Filtrage par fichiers, dossiers ou liens symboliques.
-- **Taille** : Recherche par taille (> ou <) avec unités automatiques (Ko, Mo, Go).
-- **Temps** : Filtrage par date de dernière modification (en jours).
-- **Profondeur** : Limitation de la récursion via `-mindepth` et `-maxdepth`.
+### 🌐 Interface Web Moderne
+- **Architecture Client-Serveur** : Frontend React (Vite/TS) et Backend FastAPI.
+- **Thèmes Personnalisables** : Basculez entre le mode **Sombre** et le mode **Clair** via le menu Paramètres.
+- **Ouverture Intelligente** : Cliquez sur un résultat de recherche pour l'ouvrir instantanément dans votre éditeur de texte préféré (`gnome-text-editor` ou défaut système).
 
-### 🔑 Permissions et Propriété
-- Recherche par **permissions octales** (ex: `755`).
-- Filtrage par **utilisateur** et **groupe** propriétaire.
+### 🧠 Assistant Regex Convivial
+- Ne luttez plus avec la syntaxe absconse des expressions régulières !
+- Choisissez des scénarios courants : "Commence par", "Contient uniquement des chiffres", "Format de date", "Plusieurs mots (OU)", etc.
+- L'assistant génère automatiquement la Regex POSIX-Extended optimale pour `find`.
 
-### ⚙️ Actions et Exécution
-- **Aperçu Pédagogique** : Affiche la commande Bash exacte générée en temps réel.
-- **Action -exec** : Exécute des commandes personnalisées sur les résultats trouvés (avec confirmation de sécurité).
-- **Copie rapide** : Bouton pour copier le chemin d'un fichier sélectionné dans le presse-papier.
+### 💡 Bibliothèque de Scénarios Experts
+- Apprenez à utiliser `find` comme un administrateur système senior.
+- **Pruning** : Ignorez intelligemment les dossiers lourds (`node_modules`, `.git`).
+- **Optimisation Performance** : Apprenez la différence entre les terminateurs `-exec ... ;` et `-exec ... +`.
+- **Filtres Chirurgicaux** : Recherche par inode, fichiers vides, ou permissions complexes (`-perm /002`).
 
-### 🎨 Interface et Performance
-- **Mode Sombre** : Interface élégante et lisible.
-- **Multi-threading** : Les recherches s'exécutent en arrière-plan via `QThread`, garantissant une interface fluide.
-- **Résultats Tabulaires** : Affichage détaillé (Nom, Chemin, Taille, Permissions).
+## 🛠 Installation et Lancement
 
-## 🚀 Installation
+### Lancement Rapide (Web)
+```bash
+./start.sh
+```
+Ce script gère automatiquement la création de l'environnement virtuel Python, l'installation des dépendances et le lancement du Frontend et du Backend.
 
-### Prérequis
-- Système d'exploitation : **Linux**
-- Python 3.10 ou supérieur
-
-### Installation via Environnement Virtuel (Recommandé)
-
+### Installation manuelle
 1. **Cloner le dépôt** :
    ```bash
    git clone https://github.com/nouhailler/findor.git
    cd findor
    ```
-
-2. **Créer et activer l'environnement virtuel** :
+2. **Backend** :
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   pip install -r backend/requirements.txt
+   python3 backend/main.py
+   ```
+3. **Frontend** :
+   ```bash
+   cd frontend && npm install && npm run dev
    ```
 
-3. **Installer les dépendances** :
-   ```bash
-   pip install PyQt6
-   ```
-
-## 🌐 Version Web (React + FastAPI)
-
-Findor Pro est désormais disponible via votre navigateur web ! Cette version moderne utilise React pour une interface réactive et FastAPI pour l'interaction avec le système.
-
-### Lancement rapide
+## 🖥 Version Desktop (Legacy)
+La version PyQt6 originale est toujours disponible pour un usage local rapide :
 ```bash
-./start.sh
+python3 findor.py
 ```
 
-### Installation manuelle
-1. **Backend** :
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   python3 main.py
-   ```
-2. **Frontend** :
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
----
-## 🖥 Version Desktop (Legacy)
-La version originale en PyQt6 reste disponible via `findor.py`.
-
-1. Sélectionnez votre **dossier de départ**.
-2. Ajustez vos **filtres** dans les différents onglets.
-3. Observez la **commande Bash** se construire automatiquement en haut de la fenêtre.
-4. Cliquez sur **Lancer la recherche**.
-5. Faites un clic droit ou utilisez le bouton pour copier le chemin des fichiers trouvés.
-
 ## 🛡 Sécurité
-- L'application utilise `shlex` pour traiter les commandes `-exec`, évitant ainsi les injections de shell basiques.
-- Une boîte de dialogue de confirmation apparaît toujours avant d'exécuter une action susceptible de modifier le système.
+- Validation stricte des arguments système.
+- Confirmation requise avant toute action `-exec` risquée.
+- Utilisation de `shlex` pour prévenir les injections de commandes.
 
 ## 📄 Licence
-Distribué sous la licence MIT. Voir `LICENSE` pour plus d'informations.
+Distribué sous la licence MIT.
 
 ---
-Développé avec ❤️ pour simplifier la puissance de la ligne de commande.
+Développé avec ❤️ pour rendre la puissance de Linux accessible à tous.
