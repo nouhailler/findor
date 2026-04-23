@@ -55,12 +55,32 @@
    pip install PyQt6
    ```
 
-## 📖 Utilisation
+## 🌐 Version Web (React + FastAPI)
 
-Lancez simplement le script principal :
+Findor Pro est désormais disponible via votre navigateur web ! Cette version moderne utilise React pour une interface réactive et FastAPI pour l'interaction avec le système.
+
+### Lancement rapide
 ```bash
-python3 findor.py
+./start.sh
 ```
+
+### Installation manuelle
+1. **Backend** :
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   python3 main.py
+   ```
+2. **Frontend** :
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+---
+## 🖥 Version Desktop (Legacy)
+La version originale en PyQt6 reste disponible via `findor.py`.
 
 1. Sélectionnez votre **dossier de départ**.
 2. Ajustez vos **filtres** dans les différents onglets.

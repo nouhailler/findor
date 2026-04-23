@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Findor Pro
+Comment=Interface graphique pour la commande find
+Exec=findor
+Icon=search
+Terminal=false
+Type=Application
+Categories=Utility;System;
