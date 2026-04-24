@@ -122,6 +122,192 @@ def build_find_command(params: SearchParams, use_printf: bool = True) -> List[st
 class OpenFileParams(BaseModel):
     path: str
 
+import requests
+import json
+...
+# Stockage en mémoire de la configuration IA (en production, utiliser une base ou un fichier sécurisé)
+ai_config = {
+    "provider": "ollama", # "ollama" ou "openrouter"
+    "ollama_url": "http://localhost:11434",
+    "openrouter_key": "",
+    "model": "qwen2.5:3b"
+}
+
+class AIConfigParams(BaseModel):
+    provider: str
+    ollama_url: Optional[str] = None
+    openrouter_key: Optional[str] = None
+    model: str
+
+@app.post("/api/ai/config")
+async def update_ai_config(params: AIConfigParams):
+    global ai_config
+    ai_config.update(params.dict())
+    models_info = await get_ai_models()
+    return {"message": "Configuration IA mise à jour", "models": models_info.get("models", [])}
+
+@app.get("/api/ai/config")
+async def get_ai_config():
+    return ai_config
+
+@app.get("/api/ai/models")
+async def get_ai_models(provider: Optional[str] = None, ollama_url: Optional[str] = None):
+    """Récupère les modèles disponibles selon le provider."""
+    target_provider = provider or ai_config["provider"]
+    target_url = ollama_url or ai_config["ollama_url"]
+
+    if target_provider == "ollama":
+        try:
+            response = requests.get(f"{target_url}/api/tags", timeout=5)
+            if response.status_code == 200:
+                models = [m["name"] for m in response.json().get("models", [])]
+                return {"models": models}
+        except Exception:
+            return {"models": ["qwen2.5:3b"]} # Fallback
+    else:
+        try:
+            # Pour OpenRouter, on récupère les modèles :free
+            # On utilise un User-Agent car certains API le demandent
+            headers = {
+                "HTTP-Referer": "https://github.com/findor", # Facultatif pour OpenRouter
+                "X-Title": "Findor",
+            }
+            response = requests.get("https://openrouter.ai/api/v1/models", headers=headers, timeout=10)
+            if response.status_code == 200:
+                all_models = response.json().get("data", [])
+                free_models = sorted([m["id"] for m in all_models if m["id"].endswith(":free")])
+                return {"models": free_models}
+        except Exception as e:
+            print(f"Erreur OpenRouter: {e}")
+            pass
+    return {"models": []}
+
+class AIGenerateParams(BaseModel):
+    prompt: str
+
+class SemanticSearchParams(BaseModel):
+    query: str
+    files: List[str] # Liste des chemins de fichiers à analyser
+
+@app.post("/api/ai/semantic-search")
+async def semantic_search(params: SemanticSearchParams):
+    global ai_config
+    
+    if not params.files:
+        return {"matches": []}
+
+    # On limite l'analyse aux 10 premiers fichiers texte pour le PoC
+    matches = []
+    text_files = [f for f in params.files if f.endswith(('.txt', '.md', '.py', '.js', '.json', '.conf', '.sh'))][:10]
+    
+    for file_path in text_files:
+        try:
+            file_name = os.path.basename(file_path)
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read(2000) # On lit les 2000 premiers caractères
+            
+            prompt = f"""Tu es un assistant d'analyse de fichiers.
+            Analyse le fichier suivant pour déterminer s'il correspond à la requête de l'utilisateur.
+            
+            Requête : "{params.query}"
+            Nom du fichier : {file_name}
+            Chemin complet : {file_path}
+            
+            Contenu (extrait) :
+            {content}
+            
+            Le fichier est-il pertinent ? 
+            Commence ta réponse par 'OUI' ou 'NON', puis ajoute une courte explication (1 phrase) sur pourquoi il est pertinent ou non."""
+
+            # Appel LLM (Ollama ou OpenRouter)
+            if ai_config["provider"] == "ollama":
+                response = requests.post(
+                    f"{ai_config['ollama_url']}/api/generate",
+                    json={"model": ai_config["model"], "prompt": prompt, "stream": False},
+                    timeout=15
+                )
+                if response.status_code != 200:
+                    raise Exception(f"Ollama error: {response.text}")
+                answer = response.json().get("response", "OUI (Pas d'explication fournie)").strip()
+            else:
+                response = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {ai_config['openrouter_key']}",
+                        "Content-Type": "application/json"
+                    },
+                    json={"model": ai_config["model"], "messages": [{"role": "user", "content": prompt}]},
+                    timeout=20
+                )
+                res_json = response.json()
+                if response.status_code != 200:
+                    error_msg = res_json.get("error", {}).get("message", response.text)
+                    raise Exception(f"OpenRouter error: {error_msg}")
+                
+                if "choices" in res_json and len(res_json["choices"]) > 0:
+                    answer = res_json["choices"][0]["message"]["content"].strip()
+                else:
+                    raise Exception(f"Réponse OpenRouter inattendue : {json.dumps(res_json)}")
+
+            is_match = answer.upper().startswith("OUI")
+            matches.append({
+                "file": file_path,
+                "relevant": is_match,
+                "explanation": answer
+            })
+        except Exception as e:
+            matches.append({
+                "file": file_path,
+                "relevant": False,
+                "explanation": f"Erreur d'analyse : {str(e)}"
+            })
+
+    return {"results": matches}
+
+@app.post("/api/ai/generate-regex")
+async def generate_regex(params: AIGenerateParams):
+    global ai_config
+    
+    system_prompt = """Tu es un expert en commande 'find' Linux. 
+    Ta tâche est de générer UNIQUEMENT une expression régulière compatible avec 'find -regextype posix-extended'.
+    Ne donne aucune explication, aucun texte avant ou après. Retourne juste la Regex.
+    Exemple : si je demande 'fichiers commençant par log', réponds : .*/log.*"""
+
+    try:
+        if ai_config["provider"] == "ollama":
+            response = requests.post(
+                f"{ai_config['ollama_url']}/api/generate",
+                json={
+                    "model": ai_config["model"],
+                    "prompt": f"{system_prompt}\n\nRequête : {params.prompt}",
+                    "stream": False
+                },
+                timeout=10
+            )
+            result = response.json().get("response", "").strip()
+        else:
+            # OpenRouter
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {ai_config['openrouter_key']}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": ai_config["model"],
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": params.prompt}
+                    ]
+                },
+                timeout=15
+            )
+            result = response.json()["choices"][0]["message"]["content"].strip()
+
+        return {"regex": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur IA : {str(e)}")
+
 @app.post("/api/open-file")
 async def open_file(params: OpenFileParams):
     try:

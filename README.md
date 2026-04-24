@@ -2,36 +2,45 @@
 
 **Findor Pro** est une interface graphique ultra-complète et pédagogique pour la commande Bash `find` sous Linux. Désormais disponible en version **Web (React/FastAPI)** et **Desktop (PyQt6)**.
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
 
+## 🚀 Nouveautés de la Version 3.0.0 (AI Update)
+
+### 🤖 IA Dynamique & OpenRouter
+- **Gestion des modèles dynamiques** : Findor récupère désormais en temps réel la liste des modèles disponibles (Ollama ou OpenRouter).
+- **Support OpenRouter Free** : Accès direct aux modèles gratuits de OpenRouter avec mise à jour en un clic.
+- **Auto-sélection** : L'interface choisit intelligemment le premier modèle disponible si votre configuration devient obsolète.
+
+### 🧠 Recherche Sémantique Avancée
+- **Analyse Contextuelle** : L'IA ne se base plus uniquement sur le contenu, mais comprend aussi le nom et le chemin du fichier pour répondre à vos questions.
+- **Explications Nuancées** : Pour chaque fichier analysé, l'IA fournit désormais une explication détaillée (pourquoi le fichier correspond ou non).
+- **Bouton Stop** : Vous pouvez désormais arrêter instantanément une analyse IA en cours si elle prend trop de temps.
+
+### 🎨 Améliorations UX/UI
+- **Thèmes Adaptatifs** : La zone de réponse de l'IA est désormais parfaitement lisible en mode **Clair** comme en mode **Sombre**.
+- **Indicateurs Visuels** : Retour visuel immédiat sur la pertinence des fichiers (Vert/Rouge).
+
 ## 🚀 Nouveautés de la Version 2.0.0 (Pro)
-
-### 🌐 Interface Web Moderne
-- **Architecture Client-Serveur** : Frontend React (Vite/TS) et Backend FastAPI.
-- **Thèmes Personnalisables** : Basculez entre le mode **Sombre** et le mode **Clair** via le menu Paramètres.
-- **Ouverture Intelligente** : Cliquez sur un résultat de recherche pour l'ouvrir instantanément dans votre éditeur de texte préféré (`gnome-text-editor` ou défaut système).
-
-### 🧠 Assistant Regex Convivial
-- Ne luttez plus avec la syntaxe absconse des expressions régulières !
-- Choisissez des scénarios courants : "Commence par", "Contient uniquement des chiffres", "Format de date", "Plusieurs mots (OU)", etc.
-- L'assistant génère automatiquement la Regex POSIX-Extended optimale pour `find`.
-
-### 💡 Bibliothèque de Scénarios Experts
-- Apprenez à utiliser `find` comme un administrateur système senior.
-- **Pruning** : Ignorez intelligemment les dossiers lourds (`node_modules`, `.git`).
-- **Optimisation Performance** : Apprenez la différence entre les terminateurs `-exec ... ;` et `-exec ... +`.
-- **Filtres Chirurgicaux** : Recherche par inode, fichiers vides, ou permissions complexes (`-perm /002`).
+- **Architecture Client-Serveur** : Frontend React et Backend FastAPI.
+- **Thèmes Personnalisables**.
+- **Assistant Regex Convivial**.
 
 ## 🛠 Installation et Lancement
+
+### Installation via le package Debian (Recommandé)
+Téléchargez le fichier `findor_3.0.0_all.deb` depuis la section Releases et installez-le :
+```bash
+sudo dpkg -i findor_3.0.0_all.deb
+sudo apt-get install -f # Pour les dépendances
+```
 
 ### Lancement Rapide (Web)
 ```bash
 ./start.sh
 ```
-Ce script gère automatiquement la création de l'environnement virtuel Python, l'installation des dépendances et le lancement du Frontend et du Backend.
 
 ### Installation manuelle
 1. **Cloner le dépôt** :
@@ -39,29 +48,5 @@ Ce script gère automatiquement la création de l'environnement virtuel Python, 
    git clone https://github.com/nouhailler/findor.git
    cd findor
    ```
-2. **Backend** :
-   ```bash
-   pip install -r backend/requirements.txt
-   python3 backend/main.py
-   ```
-3. **Frontend** :
-   ```bash
-   cd frontend && npm install && npm run dev
-   ```
-
-## 🖥 Version Desktop (Legacy)
-La version PyQt6 originale est toujours disponible pour un usage local rapide :
-```bash
-python3 findor.py
-```
-
-## 🛡 Sécurité
-- Validation stricte des arguments système.
-- Confirmation requise avant toute action `-exec` risquée.
-- Utilisation de `shlex` pour prévenir les injections de commandes.
-
-## 📄 Licence
-Distribué sous la licence MIT.
-
----
-Développé avec ❤️ pour rendre la puissance de Linux accessible à tous.
+2. **Backend** : `pip install -r backend/requirements.txt && python3 backend/main.py`
+3. **Frontend** : `cd frontend && npm install && npm run dev`
