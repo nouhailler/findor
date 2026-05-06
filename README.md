@@ -1,52 +1,120 @@
-# Findor Pro 🔍 - Ultimate Web & Desktop GUI for `find`
+# Findor Pro 🔍
 
-**Findor Pro** est une interface graphique ultra-complète et pédagogique pour la commande Bash `find` sous Linux. Désormais disponible en version **Web (React/FastAPI)** et **Desktop (PyQt6)**.
+<div align="center">
+  <img src="frontend/public/favicon.svg" alt="Findor Logo" width="120" height="120">
+  <h3>L'interface ultime pour dompter la puissance de <code>find</code></h3>
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
+  [![Version](https://img.shields.io/badge/version-3.0.0-blue.svg?style=for-the-badge)](https://github.com/nouhailler/findor)
+  [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+  [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+  [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+  [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://www.linux.org/)
+</div>
 
-## 🚀 Nouveautés de la Version 3.0.0 (AI Update)
+---
 
-### 🤖 IA Dynamique & OpenRouter
-- **Gestion des modèles dynamiques** : Findor récupère désormais en temps réel la liste des modèles disponibles (Ollama ou OpenRouter).
-- **Support OpenRouter Free** : Accès direct aux modèles gratuits de OpenRouter avec mise à jour en un clic.
-- **Auto-sélection** : L'interface choisit intelligemment le premier modèle disponible si votre configuration devient obsolète.
+## 🌟 Introduction
 
-### 🧠 Recherche Sémantique Avancée
-- **Analyse Contextuelle** : L'IA ne se base plus uniquement sur le contenu, mais comprend aussi le nom et le chemin du fichier pour répondre à vos questions.
-- **Explications Nuancées** : Pour chaque fichier analysé, l'IA fournit désormais une explication détaillée (pourquoi le fichier correspond ou non).
-- **Bouton Stop** : Vous pouvez désormais arrêter instantanément une analyse IA en cours si elle prend trop de temps.
+**Findor Pro** n'est pas qu'un simple wrapper. C'est un écosystème complet qui transforme la complexité de la commande Bash `find` en une expérience fluide, pédagogique et augmentée par l'Intelligence Artificielle. Que vous soyez un sysadmin chevronné ou un débutant sous Linux, Findor Pro vous permet de localiser n'est-ce qu'une aiguille dans une botte de foin numérique.
 
-### 🎨 Améliorations UX/UI
-- **Thèmes Adaptatifs** : La zone de réponse de l'IA est désormais parfaitement lisible en mode **Clair** comme en mode **Sombre**.
-- **Indicateurs Visuels** : Retour visuel immédiat sur la pertinence des fichiers (Vert/Rouge).
+Disponible en **version Desktop native (PyQt6)** et en **version Web moderne (React/FastAPI)**.
 
-## 🚀 Nouveautés de la Version 2.0.0 (Pro)
-- **Architecture Client-Serveur** : Frontend React et Backend FastAPI.
-- **Thèmes Personnalisables**.
-- **Assistant Regex Convivial**.
+---
 
-## 🛠 Installation et Lancement
+## ✨ Fonctionnalités Clés
 
-### Installation via le package Debian (Recommandé)
-Téléchargez le fichier `findor_3.0.0_all.deb` depuis la section Releases et installez-le :
+### 🤖 Intelligence Artificielle (v3.0.0)
+- **Recherche Sémantique** : L'IA comprend vos questions ("Trouve le fichier qui contient la config de la base de données") au lieu de simples mots-clés.
+- **Analyse Contextuelle** : Analyse du contenu, du nom et du chemin pour une pertinence maximale.
+- **Multi-Modèles** : Support dynamique d'**Ollama** (local) et **OpenRouter** (cloud).
+- **Explications Détaillées** : L'IA justifie pourquoi un fichier correspond à votre recherche.
+
+### 🛠️ Puissance de Recherche
+- **Visual Builder** : Construisez des commandes complexes visuellement (taille, date, permissions, profondeur, etc.).
+- **Regex Assistant** : Ne luttez plus avec les expressions régulières, Findor vous aide à les concevoir.
+- **Filtres Avancés** : Pruning de dossiers, recherche par Inode, fichiers vides, et plus encore.
+
+### 🎨 Expérience Utilisateur
+- **Thèmes Adaptatifs** : Mode Clair ☀️ / Sombre 🌙.
+- **Performance** : Traitement asynchrone pour ne jamais bloquer l'interface, même sur de gros volumes.
+- **Multi-Interface** : Choisissez entre l'application Desktop légère ou l'interface Web riche.
+
+---
+
+## 🏗️ Architecture du Projet
+
+Le projet est structuré de manière modulaire pour offrir une flexibilité totale :
+
+| Composant | Technologie | Rôle |
+| :--- | :--- | :--- |
+| **Desktop** | Python & PyQt6 | Application native ultra-rapide et légère. |
+| **Frontend Web** | React 19 & Vite | Interface moderne, réactive et élégante. |
+| **Backend API** | FastAPI | Moteur de recherche et interface avec l'IA. |
+| **Packaging** | Debian (.deb) | Installation simplifiée sur les systèmes Linux. |
+
+---
+
+## 🚀 Installation Rapide
+
+### 📦 Via le package Debian (Recommandé)
+Téléchargez la dernière version et installez-la en une ligne :
 ```bash
 sudo dpkg -i findor_3.0.0_all.deb
-sudo apt-get install -f # Pour les dépendances
+sudo apt-get install -f # Répare les dépendances si nécessaire
 ```
 
-### Lancement Rapide (Web)
+### 🌐 Lancement de la version Web
+Si vous avez cloné le dépôt, utilisez le script tout-en-un :
 ```bash
+chmod +x start.sh
 ./start.sh
 ```
 
-### Installation manuelle
-1. **Cloner le dépôt** :
-   ```bash
-   git clone https://github.com/nouhailler/findor.git
-   cd findor
-   ```
-2. **Backend** : `pip install -r backend/requirements.txt && python3 backend/main.py`
-3. **Frontend** : `cd frontend && npm install && npm run dev`
+---
+
+## 🛠️ Développement et Installation Manuelle
+
+### Prérequis
+- Python 3.10+
+- Node.js & npm (pour le web)
+
+### 1. Configuration du Backend
+```bash
+cd backend
+pip install -r requirements.txt
+python main.py
+```
+
+### 2. Configuration du Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 3. Lancement du Desktop
+```bash
+# Assurez-vous d'avoir PyQt6 installé
+python findor.py
+```
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! 
+1. Forkez le projet.
+2. Créez votre branche (`git checkout -b feature/AmazingFeature`).
+3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`).
+4. Pushez vers la branche (`git push origin feature/AmazingFeature`).
+5. Ouvrez une Pull Request.
+
+---
+
+<div align="center">
+  <p>Développé avec ❤️ pour la communauté Linux. Sous licence MIT.</p>
+  <a href="https://github.com/nouhailler/findor">
+    <img src="https://img.shields.io/github/stars/nouhailler/findor?style=social" alt="Stars">
+  </a>
+</div>

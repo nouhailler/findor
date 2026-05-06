@@ -4,11 +4,16 @@ import os
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Chargement des variables d'environnement depuis le fichier .env
+load_dotenv()
 
 app = FastAPI(title="Findor API")
 
-# Configuration CORS pour permettre au frontend React de communiquer avec l'API
+# Configuration CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,6 +21,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- Service du Frontend ---
+# On tente de servir le dossier 'static' s'il existe (utilisé pour le packaging)
+frontend_path = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(frontend_path):
+    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
 
 class SearchParams(BaseModel):
     directory: str
@@ -125,12 +137,12 @@ class OpenFileParams(BaseModel):
 import requests
 import json
 ...
-# Stockage en mémoire de la configuration IA (en production, utiliser une base ou un fichier sécurisé)
+# Stockage en mémoire de la configuration IA
 ai_config = {
-    "provider": "ollama", # "ollama" ou "openrouter"
-    "ollama_url": "http://localhost:11434",
-    "openrouter_key": "",
-    "model": "qwen2.5:3b"
+    "provider": os.getenv("AI_PROVIDER", "ollama"),
+    "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11434"),
+    "openrouter_key": os.getenv("OPENROUTER_KEY", ""),
+    "model": os.getenv("AI_MODEL", "qwen2.5:3b")
 }
 
 class AIConfigParams(BaseModel):
@@ -196,9 +208,9 @@ async def semantic_search(params: SemanticSearchParams):
     if not params.files:
         return {"matches": []}
 
-    # On limite l'analyse aux 10 premiers fichiers texte pour le PoC
+    # On limite l'analyse aux 50 premiers fichiers texte pour une recherche plus profonde
     matches = []
-    text_files = [f for f in params.files if f.endswith(('.txt', '.md', '.py', '.js', '.json', '.conf', '.sh'))][:10]
+    text_files = [f for f in params.files if f.endswith(('.txt', '.md', '.py', '.js', '.ts', '.tsx', '.json', '.conf', '.sh', '.yaml', '.yml'))][:50]
     
     for file_path in text_files:
         try:

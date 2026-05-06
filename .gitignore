@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+.env
+
+# Node / Frontend
+node_modules/
+dist/
+.eslintcache
+*.log
+
+# Debian Build
+build/*/usr/
+build/*/DEBIAN/
+*.deb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

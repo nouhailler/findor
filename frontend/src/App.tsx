@@ -81,7 +81,7 @@ function App() {
     try {
       const p = provider || aiConfig.provider;
       const u = url || aiConfig.ollama_url;
-      const res = await fetch(`http://localhost:8000/api/ai/models?provider=${p}&ollama_url=${encodeURIComponent(u)}`);
+      const res = await fetch(`/api/ai/models?provider=${p}&ollama_url=${encodeURIComponent(u)}`);
       const data = await res.json();
       if (data.models && data.models.length > 0) {
         setAiModels(data.models);
@@ -97,7 +97,7 @@ function App() {
 
   useEffect(() => {
     // Load AI config from backend
-    fetch('http://localhost:8000/api/ai/config')
+    fetch('/api/ai/config')
       .then(res => res.json())
       .then(data => {
         setAiConfig(data);
@@ -112,7 +112,7 @@ function App() {
   }, [aiConfig.provider, aiConfig.ollama_url]);
 
   const saveAiConfig = async () => {
-    const res = await fetch('http://localhost:8000/api/ai/config', {
+    const res = await fetch('/api/ai/config', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(aiConfig)
@@ -305,7 +305,7 @@ function App() {
 
   useEffect(() => {
     // Get initial CWD from backend
-    fetch('http://localhost:8000/api/cwd')
+    fetch('/api/cwd')
       .then(res => res.json())
       .then(data => setParams(prev => ({ ...prev, directory: data.cwd })))
       .catch(() => setParams(prev => ({ ...prev, directory: '.' })));
@@ -315,7 +315,7 @@ function App() {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch('http://localhost:8000/api/search', {
+      const response = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params)
@@ -336,7 +336,7 @@ function App() {
 
   const handleOpenFile = async (path: string) => {
     try {
-      const response = await fetch('http://localhost:8000/api/open-file', {
+      const response = await fetch('/api/open-file', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path })
@@ -369,7 +369,7 @@ function App() {
     setSemanticExplanations([]);
 
     try {
-      const res = await fetch('http://localhost:8000/api/ai/semantic-search', {
+      const res = await fetch('/api/ai/semantic-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
